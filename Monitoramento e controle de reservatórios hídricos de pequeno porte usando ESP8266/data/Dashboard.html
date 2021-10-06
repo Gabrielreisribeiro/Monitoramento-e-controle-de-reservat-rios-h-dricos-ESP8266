@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html>
+<script>
+var connection = new WebSocket('ws://'+location.hostname+':81/');
+
+var button_1_status = 0;
+var button_2_status = 0;
+var sens_data = 0;
+var vaz_data = 0;
+var med_data = 0;
+var dis_data = 0;
+connection.onmessage = function(event){
+
+  var full_data = event.data;
+  console.log(full_data);
+  var data = JSON.parse(full_data);
+  sens_data = data.sens;
+  vaz_data = data.vaz;
+  med_data = data.med;
+  dis_data = data.dis;
+  document.getElementById("sensor_meter").value = sens_data;
+  document.getElementById("sensor_value").innerHTML = sens_data;
+  document.getElementById("vazao_meter").value = vaz_data;
+  document.getElementById("vazao_value").innerHTML = vaz_data;
+  document.getElementById("media_meter").value = med_data;
+  document.getElementById("media_value").innerHTML = med_data;
+  document.getElementById("distancia_meter").value = dis_data;
+  document.getElementById("distancia_value").innerHTML = dis_data;
+}
+
+function button_1_on()
+{
+   button_1_status = 1; 
+  console.log("LED 1 is ON");
+  send_data();
+}
+
+function button_1_off()
+{
+  button_1_status = 0;
+console.log("LED 1 is OFF");
+send_data();
+}
+
+function button_2_on()
+{
+   button_2_status = 1; 
+  console.log("LED 2 is ON");
+  send_data();
+}
+
+function button_2_off()
+{
+  button_2_status = 0;
+console.log("LED 2 is OFF");
+send_data();
+}
+
+function send_data()
+{
+  var full_data = '{"LED1" :'+button_1_status+',"LED2":'+button_2_status+'}';
+  connection.send(full_data);
+}
+
+</script>
+
+<style>
+  *{
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+    align-items: center;
+  }
+  html,body{
+    width: 100%;
+  }
+  header{
+    padding-bottom: 30px;
+    background: #4A6FFC;
+    padding-top: 30px;
+    text-align: center;
+    border-bottom-left-radius: 7px;
+    border-bottom-right-radius: 7px;
+  }
+  h1, article{
+    color: antiquewhite;
+  }
+  .meter-container{
+    height: 100%;
+    display: flex;
+    flex-direction: row;
+    padding-top: 4%;
+    padding-bottom: 4%;
+  }
+  .Container-agua{
+    width:50%;
+    height: 50%;
+    display: flex;
+    border-left: 2px #74C4F1;
+    align-items: center;
+    justify-content: center;
+    border-right: 1px solid #647DDB;
+
+    
+  }
+  .Container-vazao{
+    width: 50%;
+    height: 50%;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  #vazao_meter{
+    width: 50%;
+    height: 60px;
+    border-radius: 50px;
+    margin-left: 5%
+        
+  }
+  #sensor_meter{
+    width: 40%;
+    height: 60px;
+    border-radius: 50px;
+    margin-left: 5%
+    
+
+  
+  }
+	  #media_meter{
+    width: 50%;
+    height: 60px;
+    border-radius: 50px;
+    margin-left: 5%
+        
+  }
+  #distancia_meter{
+    width: 40%;
+    height: 60px;
+    border-radius: 50px;
+    margin-left: 5%
+    
+
+  
+  }
+  h3{
+    color: #00044F;
+    margin-left: 2%;
+  }
+	
+	.control{
+		width: 100%;
+		background-color: rgba(251,251,251,0.27);;
+		height: 70px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content:flex-end;
+		  box-shadow: 0.5px 0.5px 5px #000;
+	}
+	
+	button{
+		width: 16%;
+		height: 70%;
+		border-radius: 10px;
+		border-style: none;
+		margin: 10px;
+		background: rgba(189,189,189,0.93);
+		animation-delay: 2s;
+		position: relative;
+		transition: all 0.5s ease-in;
+		cursor: pointer;
+	}
+		button:hover{
+background-color:rgba(54,54,54,0.73);
+		color: aliceblue;
+		animation-delay: 1.5s;
+	}
+	.control h3{
+	margin-right: 55%;
+		font-family:Cambria, "Hoefler Text", "Liberation Serif", Times, "Times New Roman", "serif";
+	}
+  </style>
+  <header>
+    <h1>DASHBOARD</h1>
+    <article>Controle de Sisterna</article>
+  </header>
+<body>
+<div class="control">
+	<h3> Acionar Bomba </h3>
+<button onclick= "button_1_on()" >On</button><button onclick="button_1_off()" >Off</button>
+	</div>
+<div class="meter-container">
+  <div class = "Container-agua">
+    <h3>Volume da Agua</h3><meter value="0" min="0" max="4" id="sensor_meter"> </meter><h3 id="sensor_value"> 2 </h3>
+  </div>
+  
+  <div class = "Container-vazao" >
+    <h3>Vazao da Agua</h3><meter value="0" min="0" max="100" id="vazao_meter"> </meter><h3 id="vazao_value"> 2 </h3>
+  </div>
+	
+</div>
+	<div class="meter-container">
+  <div class = "Container-agua">
+    <h3>Distancia</h3><meter value="0" min="0" max="20" id="distancia_meter"> </meter><h3 id="distancia_value"> 2 </h3>
+  </div>
+  
+  <div class = "Container-vazao" >
+    <h3>Media Vazao</h3><meter value="0" min="0" max="10" id="media_meter"> </meter><h3 id="media_value"> 2 </h3>
+  </div>
+	
+</div>
+
+
+</body>
+</html>
